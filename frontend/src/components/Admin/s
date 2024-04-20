@@ -1,0 +1,16 @@
+<div className="border p-4">
+{/* Render your chart components here */}
+{revenueData && <BarChart data={revenueData} />}
+</div>
+<div className="border p-4">
+{/* Render your chart components here */}
+{popularDurationsData && <PieChart data={popularDurationsData} />}
+</div>
+<div className="border p-4">
+{/* Render your chart components here */}
+{mostRentedCarsData && <BarChart data={mostRentedCarsData} />}
+</div>
+<div className="border p-4">
+{/* Render your chart components here */}
+{monthlyRevenueTrendData && <LineChart data={monthlyRevenueTrendData} />}
+</div>
