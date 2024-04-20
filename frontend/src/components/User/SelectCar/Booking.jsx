@@ -8,7 +8,12 @@ const BookingPopup = ({ closePopup, car }) => {
   const [step, setStep] = useState(1);
   const [days, setDays] = useState(0);
   const [rentalCost, setRentalCost] = useState(0);
+  const [applied, setApplied] = useState(false);
   const navigate = useNavigate();
+  const [coupon, setCoupon] = useState();
+  const [isValid, setIsValid] = useState(false);
+  const [finalPrice, setFinalPrice] = useState(null);
+  const [validCoupon, setValidCoupon] = useState(null);
   const [bookingData, setBookingData] = useState({
     duration: 0,
     paymentDetails: "",
@@ -18,7 +23,22 @@ const BookingPopup = ({ closePopup, car }) => {
     from: new Date(),
     to: new Date(),
     deliveryAddress: "",
+    price: 0,
   });
+  const validCoupons = [
+    {
+      coupon: "njit10",
+      discount: 10,
+    },
+    {
+      coupon: "njit20",
+      discount: 20,
+    },
+    {
+      coupon: "njit30",
+      discount: 30,
+    },
+  ];
 
   const handleNextStep = async () => {
     setStep(step + 1);
@@ -26,6 +46,27 @@ const BookingPopup = ({ closePopup, car }) => {
 
   const handlePreviousStep = () => {
     setStep(step - 1);
+  };
+  const handleApply = (e) => {
+    e.preventDefault();
+    let valid = validCoupons.find((c) => coupon === c.coupon);
+    if (valid) {
+      setIsValid(true);
+      setValidCoupon(valid);
+      let f =
+        car.dailyRate * days - car.dailyRate * days * (valid.discount / 100);
+      setFinalPrice(f);
+    } else {
+      setIsValid(false);
+    }
+    setApplied(true);
+  };
+  const handleCancel = (e) => {
+    e.preventDefault();
+    setApplied(false);
+    setValidCoupon(null);
+    setFinalPrice(null);
+    setIsValid(false);
   };
 
   const handleChange = (e) => {
@@ -44,23 +85,22 @@ const BookingPopup = ({ closePopup, car }) => {
       const parsedData = JSON.parse(carTapData);
 
       // Use the parsed data as needed
-      carTapData=parsedData
-      console.log("parse",parsedData);
+      carTapData = parsedData;
     } else {
       console.log("No data found in localStorage");
     }
 
     try {
+      let final = isValid ? finalPrice : rentalCost;
       const response = await axios.post(`${host}/orders/create`, {
         startDate: filterData.from,
         endDate: filterData.to,
         carId: car._id,
         userId: carTapData._id,
-        rentalCost,
+        rentalCost: final,
       });
 
       // Handle form submission logic
-      console.log("Booking data:", bookingData);
 
       // Display success message using Swal
       await Swal.fire({
@@ -158,7 +198,7 @@ const BookingPopup = ({ closePopup, car }) => {
           </form>
         )}
         {step === 2 && (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleNextStep}>
             {/* <label htmlFor="paymentDetails" className="block mb-4">
               Payment Details:
               <input
@@ -184,6 +224,141 @@ const BookingPopup = ({ closePopup, car }) => {
                 placeholder="Enter delivery address"
                 required
               />
+            </label>
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={handlePreviousStep}
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+              >
+                Previous
+              </button>
+              <button
+                onClick={closePopup}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Close
+              </button>
+              <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Next
+              </button>
+            </div>
+          </form>
+        )}
+        {/* {step === 3 && (
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="deliveryAddress" className="block mb-4">
+              Coupon Code:
+              <input
+                type="text"
+                id="coupon"
+                name="coupon"
+                value={coupon}
+                onChange={(e) => {
+                  setCoupon(e.target.value);
+                }}
+                className="border border-gray-300 rounded p-2 w-full"
+                placeholder="Enter Coupon Code"
+                disabled={applied}
+              />
+              {applied &&
+                (isValid ? (
+                  <div>
+                    <p>coupon {coupon} applied</p>
+                    <p>Discount : {validCoupon.discount}%</p>
+                    <p>Final Price: ${finalPrice}</p>
+                  </div>
+                ) : (
+                  <p className="text-red">Coupon is Invalid</p>
+                ))}
+              {!applied && (
+                <button
+                  onClick={handleApply}
+                  className="bg-gray-500 text-white px-4 py-2 rounded"
+                >
+                  Apply
+                </button>
+              )}
+              {applied && (
+                <button
+                  onClick={handleCancel}
+                  className="bg-gray-500 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+              )}
+            </label>
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={handlePreviousStep}
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+              >
+                Previous
+              </button>
+              <button
+                onClick={closePopup}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Close
+              </button>
+              <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Confirm Booking
+              </button>
+            </div>
+          </form>
+        )} */}
+        {step === 3 && (
+          <form onSubmit={handleSubmit} className="mb-4">
+            <label htmlFor="deliveryAddress" className="block mb-4">
+              Coupon Code:
+              <input
+                type="text"
+                id="coupon"
+                name="coupon"
+                value={coupon}
+                onChange={(e) => {
+                  setCoupon(e.target.value);
+                }}
+                className="border border-gray-300 rounded p-2 w-full mt-2"
+                placeholder="Enter Coupon Code"
+                disabled={applied}
+              />
+              {applied && (
+                <>
+                  {isValid ? (
+                    <div className="mt-2">
+                      <p className="text-green-500">Coupon {coupon} applied</p>
+                      <p>Discount: {validCoupon.discount}%</p>
+                      <p className="font-bold">Final Price: ${finalPrice}</p>
+                    </div>
+                  ) : (
+                    <p className="text-red-500 mt-2">Coupon is Invalid</p>
+                  )}
+                </>
+              )}
+              {!applied && (
+                <button
+                  onClick={handleApply}
+                  className="bg-gray-500 text-white px-4 py-2 rounded mt-2"
+                >
+                  Apply
+                </button>
+              )}
+              {applied && (
+                <button
+                  onClick={handleCancel}
+                  className="bg-gray-500 text-white px-4 py-2 rounded mt-2"
+                >
+                  Cancel
+                </button>
+              )}
             </label>
             <div className="flex justify-between">
               <button
