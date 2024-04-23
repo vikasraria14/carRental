@@ -31,7 +31,7 @@ const Add = ({
     e.preventDefault();
 
     try {
-      let finalData = { ...empData, month: selectedMonth, year: selectedYear };
+      let finalData = { ...empData };
       let res = await axios.post(`${host}/${endpoint}`, finalData);
 
       data.push(res.data);
