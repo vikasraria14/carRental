@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import carPng from "../../assets/car.png";
 import yellowCar from "../../assets/banner-car.png";
 import AOS from "aos";
@@ -37,16 +38,12 @@ const Hero = ({ theme }) => {
             <p data-aos="fade-up" data-aos-delay="1000">
             Experience hassle-free car rental today! Choose from a variety of car types, including compact, SUV, and luxury models.
             </p>
-            <button
-              data-aos="fade-up"
-              data-aos-delay="1500"
-              onClick={() => {
-                AOS.refreshHard();
-              }}
-              className="rounded-md bg-primary hover:bg-primary/80 transition duration-500 py-2 px-6 text-black"
-            >
+            <p>
+            <Link to="/login" className="rounded-md bg-primary hover:bg-primary/80 transition duration-500 py-2 px-6 mt-[5px] text-black">
               Get Started
-            </button>
+            </Link>
+            </p>
+           
           </div>
         </div>
       </div>

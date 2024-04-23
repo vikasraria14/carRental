@@ -75,7 +75,7 @@ const App = () => {
       { id: 2, name: "Login", link: "/login" },
       { id: 3, name: "Sign Up", link: "/signup" },
       { id: 4, name: "Admin Login", link: "/adminlogin" },
-      { id: 5, name: "Admin Signup", link: "/adminsignup" },
+      // { id: 5, name: "Admin Signup", link: "/adminsignup" },
     ];
   }
 
@@ -125,6 +125,16 @@ const App = () => {
                 path="/"
                 element={<LandingPage theme={theme} setTheme={setTheme} />}
               />
+              <Route
+                path="/login"
+                element={
+                  <LoginForm
+                    theme={theme}
+                    setIsLoggedIn={setIsLoggedIn}
+                    setUserType={setUserType}
+                  />
+                }
+              />
             </Routes>
           </div>
         </Router>
@@ -145,15 +155,22 @@ const App = () => {
                 path="/admin/carlist"
                 element={<CarTable theme={theme} setTheme={setTheme} />}
               />
-              <Route
-                path="/admin/dashboard"
-                element={<Dashboard />}
-              />
+              <Route path="/admin/dashboard" element={<Dashboard />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
 
               <Route
                 path="/"
                 element={<LandingPage theme={theme} setTheme={setTheme} />}
+              />
+              <Route
+                path="/login"
+                element={
+                  <LoginForm
+                    theme={theme}
+                    setIsLoggedIn={setIsLoggedIn}
+                    setUserType={setUserType}
+                  />
+                }
               />
             </Routes>
           </div>
